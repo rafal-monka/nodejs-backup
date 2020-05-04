@@ -7,14 +7,14 @@ const csv = require("./exportcsv");
 const saveLog = (name) => {
   console.log("saveLog..."+name);
       
-  let conn = dbConfig.backupConnection();
-  conn.connect(error => {
-      if (error) throw error;    
-      console.log("querying...");  
-      conn.query("INSERT INTO backupjobs (what, amount) VALUES ('"+name+"', 123)", function(error, data, fields) {
-          if (error) throw error;  
-      })
-  });
+  // let conn = dbConfig.backupConnection();
+  // conn.connect(error => {
+  //     if (error) throw error;    
+  //     console.log("querying...");  
+  //     conn.query("INSERT INTO backupjobs (what, amount) VALUES ('"+name+"', 123)", function(error, data, fields) {
+  //         if (error) throw error;  
+  //     })
+  // });
 }
 
 exports.backupMemory = (date) => {
@@ -26,7 +26,7 @@ exports.backupMemory = (date) => {
       console.log("connecting...");
       if (error) throw error;    
       console.log("querying...");  
-      conn.query("SELECT count(*) FROM savedroutes", function(error, data, fields) {
+      conn.query("SELECT * FROM savedroutes", function(error, data, fields) {
           conn.end();
           if (error) throw error;    
           const jsonData = JSON.parse(JSON.stringify(data));          
