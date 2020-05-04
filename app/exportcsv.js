@@ -4,7 +4,7 @@ const fastcsv = require("fast-csv");
 exports.saveToCSV = (jsonData, filename) => {
     console.log("Write to "+filename+" successfully!");
     console.log(filename, jsonData);
-    const ws = fs.createWriteStream("./export-data/"+filename);
+    const ws = fs.createWriteStream(filename);
     fastcsv
       .write(jsonData, { headers: true })
       .on("finish", function() {
