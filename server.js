@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
 });
 
 bj.backupJob();
-var j = schedule.scheduleJob('*/59 * * * *', function(){
+var j = schedule.scheduleJob("0 22 * * *", function(){
   bj.backupJob();
 });
 
