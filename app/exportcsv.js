@@ -1,14 +1,28 @@
 const fastcsv = require("fast-csv");
- const fs = require("fs");
+const fs = require("fs");
+const gdrive = require("./upload-gdrive.js");
 
 exports.saveToCSV = (jsonData, filename) => {
-    console.log("Write to "+filename+" successfully!");
-    console.log(filename, jsonData);
-    const ws = fs.createWriteStream(filename);
+    const dir = './export-data';
+    const filepath = dir+'/'+filename;
+    console.log("Writing... to file "+filepath);
+
+    //create folder
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir);
+    }
+
+    //save to file
+    const ws = fs.createWriteStream(filepath);
     fastcsv
-      .write(jsonData, { headers: true })
-      .on("finish", function() {
-        console.log("Write to "+filename+" successfully!");
-      })
-      .pipe(ws);
+        .write(jsonData, { 
+          headers: false,
+          delimiter: ";",
+          quoteColumns: true
+        })
+        .on("finish", function() {
+            console.log("Write to "+filepath+" successfully!");
+            //@@@ gdrive.uploadGDrive(filenama);
+        })
+        .pipe(ws);
 }

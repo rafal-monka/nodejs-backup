@@ -8,6 +8,7 @@ const schedule = require('node-schedule');
 const app = express();
 //const db = require("./app/models");
 const bj = require("./app/backup-job.js");
+// const gdrive = require("./app/upload-gdrive.js");
 
 console.log("Starting Backup app..."+process.env.MAIL_USER);
 
@@ -26,10 +27,11 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to Backup application." });
 });
 
+
 bj.backupJob();
-var j = schedule.scheduleJob("0 22 * * *", function(){
-  bj.backupJob();
-});
+//var j = schedule.scheduleJob("0 22 * * *", function(){
+//  bj.backupJob();
+//});
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8083;
