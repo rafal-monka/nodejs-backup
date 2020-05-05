@@ -9,6 +9,7 @@ exports.saveToCSV = (jsonData, filename) => {
 
     //create folder
     if (!fs.existsSync(dir)){
+        console.log("mkdirSync... "+dir);
         fs.mkdirSync(dir);
     }
 

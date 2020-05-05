@@ -18,10 +18,9 @@ exports.backupMemory = (day) => {
   pool.query(sqltext[0], [day+" 00:00:00", day+" 23:59:59"], function(error, data, fields) {
       if (error) throw error;    
       const jsonData = JSON.parse(JSON.stringify(data));          
-
-      //export to CSV file
-      console.log("savingToCSV...");
+      //export to CSV file      
       var filename = filenames[0]+"."+day+".csv";
+      console.log("savingToCSV...",filename);
       if (Object.keys(jsonData).length > 0) {
           csv.saveToCSV(jsonData, filename);
       } else {
