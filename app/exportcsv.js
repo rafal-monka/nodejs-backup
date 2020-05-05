@@ -23,7 +23,7 @@ exports.saveToCSV = (jsonData, filename) => {
         })
         .on("finish", function() {
             console.log("Write to "+filepath+" successfully!");
-            //@@@ gdrive.uploadGDrive(filenama);
+            gdrive.uploadGDrive(filepath);
         })
         .pipe(ws);
 }
