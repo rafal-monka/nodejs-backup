@@ -23,18 +23,23 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // simple route
-app.get("/", (req, res) => {
+app.get("/home/", (req, res) => {
   res.json({ message: "Welcome to Backup application." });
 });
 
-
-bj.backupJob();
-//var j = schedule.scheduleJob("0 22 * * *", function(){
-//  bj.backupJob();
-//});
+app.get("/", (req, res) => {
+  res.json( {code: req.query.code} );
+});
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8083;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
+
+bj.backupJob();
+//var j = schedule.scheduleJob("0 22 * * *", function(){
+//  bj.backupJob();
+//});
+
+

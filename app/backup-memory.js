@@ -1,60 +1,77 @@
-// Create conn to the databases, export data to CSV, and upload files to GDrive
-const dbConfig = require("./config/db.config");
-const mysql = require("mysql2");
+// Export data to CSV, and upload files to GDrive
 const csv = require("./exportcsv");
+const backupStatus = require("./backup-status");
 
-exports.backupMemory = (day) => {
-  console.log("backupMemory()");
-  const filenames = ['savedroutes'];
-  const sqltext = [
-    "SELECT imei,name,DATE_FORMAT(datefrom,'%Y-%m-%d %T'),DATE_FORMAT(dateto,'%Y-%m-%d %T'),pausetime,distance,distance2 "
-    +" FROM savedroutes"
-   +" WHERE created_at BETWEEN ? AND ?"
-  +" ORDER BY 3"]; 
-  //connect to the database
-  console.log("memoryConnectionPool..."+sqltext);
-  let pool = dbConfig.memoryConnectionPool();  
-  //columns: imei,name,datefrom,dateto,pausetime,distance,distance2
-  pool.query(sqltext[0], [day+" 00:00:00", day+" 23:59:59"], function(error, data, fields) {
-      if (error) throw error;    
-      const jsonData = JSON.parse(JSON.stringify(data));          
-      //export to CSV file      
-      var filename = filenames[0]+"."+day+".csv";
-      console.log("savingToCSV...",filename);
-      if (Object.keys(jsonData).length > 0) {
-          csv.saveToCSV(jsonData, filename);
-      } else {
-          console.log("No data...");
-      }
-      //saveLog("savedroutes");
-      
-  });
-}
+exports.backupMemory = (pool, day) => {
+console.log('backupMemory');
+    const tables = [
+        {name: "geolocs", 
+          sql: "SELECT imei, clientdata, serverdata, longitude, latitude, altitude, accuracy, speed, bearing, name"
+              +" FROM geolocs "
+              +" WHERE created_at BETWEEN ? AND ?"},
+        {name: "savedroutes",
+          sql: "SELECT imei,name,DATE_FORMAT(datefrom,'%Y-%m-%d %T'),DATE_FORMAT(dateto,'%Y-%m-%d %T'),pausetime,distance,distance2 "
+                +" FROM savedroutes"
+                +" WHERE created_at BETWEEN ? AND ?"
+                +" ORDER BY 3"},
+        {name: "places", 
+          sql: "SELECT imei, longitude, latitude, altitude, name"
+                +" FROM places "
+                +" WHERE created_at BETWEEN ? AND ?"}
+    ]; 
+    
+    let datefrom = day+" 00:00:00";
+    let dateTo = day+" 23:59:59";
+    //loop tables
+    tables.forEach((table, index) => {
+console.log('forEach',table.name);
+        backupStatus.addItem(table.name);
 
-exports.backupMemoryOLD = (date) => {
-    console.log("backupMemory()");
-    //connect to the database
-    console.log("createconn...");
-    let conn = dbConfig.memoryConnection();
-    conn.connect(error => {
-        console.log("connecting...");
-        if (error) throw error;    
-        console.log("querying...");  
-        conn.query("SELECT * FROM savedroutes", function(error, data, fields) {
-            conn.end();
+        pool.query(table.sql, [datefrom, dateTo], function(error, data, fields) {
             if (error) throw error;    
-            const jsonData = JSON.parse(JSON.stringify(data));          
+            const results = JSON.parse(JSON.stringify(data));          
+            let rowsNumber = Object.keys(results).length;
 
-            //export to CSV file
-            console.log("savingToCSV...");
-            var filename = "savedroutes."+date+".csv";
-            csv.saveToCSV(jsonData, filename);
-
-            //saveLog("savedroutes");
-            gdrive.uploadGDrive(filenam);
-        });
-    });
+            if (rowsNumber > 0) {
+                backupStatus.setRows(table.name, rowsNumber);
+                //export to CSV file      
+                let filename = table.name+"."+day+".csv";
+                csv.saveToCSV(results, filename, table.name);
+            } else {
+                backupStatus.setExported(table.name, true);
+                backupStatus.setRows(table.name, 0);
+                backupStatus.setStatus(table.name, true);
+            }                     
+        });    
+    });     
 }
+
+
+// //--------------------------------------------OLD
+// exports.backupMemoryOLD = (date) => {
+//     console.log("backupMemory()");
+//     //connect to the database
+//     console.log("createconn...");
+//     let conn = dbConfig.memoryConnection();
+//     conn.connect(error => {
+//         console.log("connecting...");
+//         if (error) throw error;    
+//         console.log("querying...");  
+//         conn.query("SELECT * FROM savedroutes", function(error, data, fields) {
+//             conn.end();
+//             if (error) throw error;    
+//             const jsonData = JSON.parse(JSON.stringify(data));          
+
+//             //export to CSV file
+//             console.log("savingToCSV...");
+//             var filename = "savedroutes."+date+".csv";
+//             csv.saveToCSV(jsonData, filename);
+
+//             //saveLog("savedroutes");
+//             gdrive.uploadGDrive(filenam);
+//         });
+//     });
+// }
 
     // const saveLog = (name) => {
     //   console.log("saveLog..."+name);
@@ -114,3 +131,13 @@ exports.backupMemoryOLD = (date) => {
 // db.backupjob1 = require("./backupjob.model.js")(sequelizeBACKUP, Sequelize);
 
 // module.exports = db;
+
+
+// csv.saveToCSV(jsonData, filename, 
+//     (arg = index)=> { //<--------------------------------callback with parameters
+//         console.log('index=', index);
+//         backupStatus[arg].exported = true;
+//         backupStatus[arg].rows = rows
+//         console.log(backupStatus);
+//     }
+// );
