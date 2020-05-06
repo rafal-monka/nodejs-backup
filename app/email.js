@@ -16,7 +16,7 @@ console.log('sendEmail');
         to: 'monka.rafal@gmail.com',
         subject: subject,
         html: '<!DOCTYPE html>'+
-        '<html><head><title>Appointment</title>'+
+        '<html><head><title>Geoloc Backup Info</title>'+
         '</head><body><pre>'+body+
         '</pre></body></html>'
     };
