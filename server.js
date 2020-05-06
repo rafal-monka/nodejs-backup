@@ -39,7 +39,7 @@ app.listen(PORT, () => {
 
 //bj.backupJob();
 var j = schedule.scheduleJob("0 22 * * *", function(){
- bj.backupJob();
+    bj.backupJob();
 });
 
 
