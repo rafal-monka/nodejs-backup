@@ -37,9 +37,9 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
 
-bj.backupJob();
-//var j = schedule.scheduleJob("0 22 * * *", function(){
-//  bj.backupJob();
-//});
+//bj.backupJob();
+var j = schedule.scheduleJob("0 22 * * *", function(){
+ bj.backupJob();
+});
 
 
