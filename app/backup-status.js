@@ -56,15 +56,15 @@ console.log(">status=", status, '-', this.i, '/', this.maxi);
             setTimeout(function() { 
                 console.log(this.i); 
                 this.checkingStatus(day);    
-            }, CONST_INTERVAL);
+            }, this.CONST_INTERVAL);
             this.i++;
         } else {
             console.log('Send email NOT DONE');
-            email.sendEmail('[Error] Geoloc backup of '+day, backupStatus.getInfo());
+            email.sendEmail('[Error] Geoloc backup of '+day, this.getInfo());
         }
     } else {
         console.log('Send email OK'); 
-        email.sendEmail('[OK] Geoloc backup of '+day, backupStatus.getInfo());
+        email.sendEmail('[OK] Geoloc backup of '+day, this.getInfo());
     }
 }
 };
