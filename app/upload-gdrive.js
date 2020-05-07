@@ -4,13 +4,16 @@ const readline = require('readline');
 const {google} = require('googleapis');
 const backupStatus = require("./backup-status");
 
+//uproszczony schemat dostępu - już po otrzymaniu tokenów
+//??? https://gist.github.com/begimai/36cb1239523bdea6b62dce1c7ebc4034
+
+
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
-const TOKEN_PATH = 'token.json';
-
+const TOKENS_PATH = 'gdrive-tokens.json';
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
  * given callback function.
@@ -18,16 +21,29 @@ const TOKEN_PATH = 'token.json';
  * @param {function} callback The callback to call with the authorized client.
  */
 function authorize(credentials, callback, folder, filename, tablename) {    
-// console.log('authorize...');
+console.log('authorize...');
     try {
         const {client_secret, client_id, redirect_uris} = credentials.installed;
         const oAuth2Client = new google.auth.OAuth2(
             client_id, client_secret, redirect_uris[0]);
 
+        // Read: https://stackoverflow.com/questions/10827920/not-receiving-google-oauth-refresh-token    
+        // oAuth2Client.on('tokens', (tokens) => {
+        //     if (tokens.refresh_token) {
+        //         // store the refresh_token in my database!
+        //         console.log("###refresh_token: ",tokens.refresh_token);
+        //     }
+        //     console.log("###access_token", tokens.access_token);
+        // });
+
         // Check if we have previously stored a token.
-        fs.readFile(TOKEN_PATH, (err, token) => {
-            if (err) return getAccessToken(oAuth2Client, callback, folder, filename, tablename);
-            oAuth2Client.setCredentials(JSON.parse(token));
+        fs.readFile(TOKENS_PATH, (err, token) => {
+            if (err) {
+                console.log('###file '+TOKENS_PATH+' NOT found. Call getAccessToken');
+                return getAccessToken(oAuth2Client, callback, folder, filename, tablename);
+            }
+            console.log('###file '+TOKENS_PATH+' found. Use credentials');
+            oAuth2Client.setCredentials(JSON.parse(token));            
             callback(oAuth2Client, folder, filename, tablename);
         });
     } catch (e) {
@@ -60,22 +76,16 @@ function getAccessToken(oAuth2Client, callback, folder, filename, tablename) {
         rl.close();
         oAuth2Client.getToken(code, (err, token) => {
             if (err) return console.error('Error retrieving access token', err);
-            oAuth2Client.setCredentials(token);            
+            oAuth2Client.setCredentials(token);
+
             // Store the token to disk for later program executions
-            fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+            fs.writeFile(TOKENS_PATH, JSON.stringify(token), (err) => {
                 if (err) return console.error(err);
-                console.log('Token stored to', TOKEN_PATH);
+                console.log('Token stored to', TOKENS_PATH);
             });
             callback(oAuth2Client, folder, filename, tablename);
         });
 
-        oAuth2Client.on('tokens', (tokens) => {
-            if (tokens.refresh_token) {
-              // store the refresh_token in my database!
-              console.log("refresh_token: ",tokens.refresh_token);
-            }
-            console.log("access_token", tokens.access_token);
-        });
     });
     //---
 }
@@ -94,6 +104,7 @@ console.log('uploadFile: '+filename+' from folder '+folder);
         mimeType: 'text/csv',
         body: fs.createReadStream(folder+'/'+filename)
     };
+
     drive.files.create({
         resource: fileMetadata,
         media: media,

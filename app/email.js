@@ -1,5 +1,6 @@
 //email
 const nodemailer = require('nodemailer');
+require('dotenv').config();
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -16,9 +17,11 @@ console.log('sendEmail');
         to: 'monka.rafal@gmail.com',
         subject: subject,
         html: '<!DOCTYPE html>'+
-        '<html><head><title>Geoloc Backup Info</title>'+
-        '</head><body><pre>'+body+
-        '</pre></body></html>'
+              '<html><head><title>Geoloc Backup Info</title></head>'+
+              '<body>'+
+              '<h4>'+process.env.DB_HOST+'</h4>'+
+              '<pre>'+body+'</pre>'+
+              '</body></html>'
     };
     transporter.sendMail(mailOptions, function(error, info){
       if (error) {

@@ -1,6 +1,9 @@
+const email = require("./email");
+
 var backupStatus = {
+    CONST_INTERVAL: 5*1000, //5 seconds
     i: 0,
-    maxi: 3,
+    maxi: 6,
     items: [], 
     addItem: function(name, rows = null, exported = null, uploaded = null, status = false) {
         this.items.push({
@@ -33,16 +36,37 @@ var backupStatus = {
     },       
     check: function() {
         console.log('checking...');
-        //this.show();
         //array.reduce(function(total, currentValue, currentIndex, arr), initialValue)
         return this.items.reduce((total, current) => total && current.status, true);         
     }, 
-    getInfo: function() {
+    getInfo: function() {        
         return JSON.stringify(this.items, null, 3);  
     },        
     show: function() {
-        console.log('show=', this.getInfo());
+        console.log('show=', JSON.stringify(this.items));
+    },
+    checkingStatus: function(day) { 
+console.log('checkingStatus');
+console.log(backupStatus.show());
+
+    let status = backupStatus.check();
+console.log(">status=", status, '-', this.i, '/', this.maxi);
+    if (status === false) {
+        if (this.i < this.maxi) {
+            setTimeout(function() { 
+                console.log(this.i); 
+                this.checkingStatus(day);    
+            }, CONST_INTERVAL);
+            this.i++;
+        } else {
+            console.log('Send email NOT DONE');
+            email.sendEmail('[Error] Geoloc backup of '+day, backupStatus.getInfo());
+        }
+    } else {
+        console.log('Send email OK'); 
+        email.sendEmail('[OK] Geoloc backup of '+day, backupStatus.getInfo());
     }
+}
 };
 
 module.exports = backupStatus;
