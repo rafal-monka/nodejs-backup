@@ -46,16 +46,17 @@ var backupStatus = {
         console.log('show=', JSON.stringify(this.items));
     },
     checkingStatus: function(day) { 
+        var self = this;
 console.log('checkingStatus');
-console.log(backupStatus.show());
+console.log(this.show());
 
     let status = backupStatus.check();
 console.log(">status=", status, '-', this.i, '/', this.maxi);
     if (status === false) {
         if (this.i < this.maxi) {
             setTimeout(function() { 
-                console.log(this.i); 
-                this.checkingStatus(day);    
+                console.log(self.id); 
+                self.checkingStatus(day);    
             }, this.CONST_INTERVAL);
             this.i++;
         } else {
