@@ -1,11 +1,11 @@
 const dbConfig = require("./config/db.config");
 const dbs = require("./backup-memory");
 const backupStatus = require("./backup-status");
+//const email = require("./email");
 
 //backup job
-exports.backupJob = ()=> {
+exports.backupJob = (today = new Date())=> {
 console.log('backupJob');
-    let today = new Date();
     let day = today.getFullYear()+'-'+('0'+(today.getMonth()+1)).substring(-2)+'-'+('0'+today.getDate()).substring(-2); 
 
     try {
@@ -24,3 +24,4 @@ console.log('backupJob');
         console.log(e.toString());
     }    
 }
+
