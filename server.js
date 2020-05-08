@@ -66,7 +66,7 @@ app.get("/index/", (req, res) => {
 // set port, listen for requests
 const PORT = process.env.PORT || 8083;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+  console.log(`Server Node.js is running on port ${PORT}.`);
 });
 
 //bj.backupJob();
