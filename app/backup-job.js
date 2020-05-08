@@ -4,9 +4,9 @@ const backupStatus = require("./backup-status");
 //const email = require("./email");
 
 //backup job
-exports.backupJob = (today = new Date())=> {
+exports.backupJob = (date = new Date())=> {
 console.log('backupJob');
-    let day = today.getFullYear()+'-'+('0'+(today.getMonth()+1)).substring(-2)+'-'+('0'+today.getDate()).substring(-2); 
+    let day = date.getFullYear()+'-'+('0'+(date.getMonth()+1)).substring(-2)+'-'+('0'+date.getDate()).substring(-2); 
 
     try {
         //connect to the database

@@ -31,13 +31,45 @@ app.get("/", (req, res) => {
   res.json( {code: req.query.code} );
 });
 
+app.get("/backup/", (req, res) => {
+  let day = req.query.day;
+  try {
+      let d = new Date(day);
+      bj.backupJob(d);
+      res.json( {message: "Backup of "+day+" has started..."} );
+  } catch (e) {
+      res.json( {message: e.toString()} );
+  }
+  
+  //res.json( {day: req.query.day} ); 
+});
+
+app.get("/index/", (req, res) => {
+    let http = require('http');
+    let fs = require('fs');
+
+    res.writeHead(200, {
+        'Content-Type': 'text/html'
+    });
+    fs.readFile('./index.html', null, function (error, data) {
+        if (error) {
+            res.writeHead(404);
+            res.write('Whoops! File not found!');
+        } else {
+            res.write(data);
+        }
+        res.end();
+    });
+});
+
+
 // set port, listen for requests
 const PORT = process.env.PORT || 8083;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
 
-bj.backupJob();
+//bj.backupJob();
 var j = schedule.scheduleJob("0 20 * * *", function(){
     bj.backupJob();
 });
