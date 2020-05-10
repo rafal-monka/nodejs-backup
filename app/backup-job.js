@@ -6,7 +6,7 @@ const backupStatus = require("./backup-status");
 //backup job
 exports.backupJob = (date = new Date())=> {
 console.log('backupJob');
-    let day = date.getFullYear()+'-'+('0'+(date.getMonth()+1)).substring(-2)+'-'+('0'+date.getDate()).substring(-2); 
+    let day = date.getFullYear()+'-'+(''+date.getMonth()+1).padStart(2,'0')+'-'+(''+date.getDate()).padStart(2,'0'); 
 
     try {
         //connect to the database
