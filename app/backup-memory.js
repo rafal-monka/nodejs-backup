@@ -7,17 +7,21 @@ console.log('backupMemory');
     const tables = [
         {name: "geolocs", 
           sql: "SELECT imei, clientdata, serverdata, longitude, latitude, altitude, accuracy, speed, bearing, name"
-              +" FROM geolocs "
+               +" FROM geolocs "
               +" WHERE created_at BETWEEN ? AND ?"},
         {name: "savedroutes",
           sql: "SELECT imei,name,DATE_FORMAT(datefrom,'%Y-%m-%d %T'),DATE_FORMAT(dateto,'%Y-%m-%d %T'),pausetime,distance,distance2 "
-                +" FROM savedroutes"
-                +" WHERE created_at BETWEEN ? AND ?"
-                +" ORDER BY 3"},
+               +" FROM savedroutes"
+              +" WHERE created_at BETWEEN ? AND ?"
+              +" ORDER BY 3"},
         {name: "places", 
           sql: "SELECT imei, longitude, latitude, altitude, name"
-                +" FROM places "
-                +" WHERE created_at BETWEEN ? AND ?"}
+               +" FROM places "
+              +" WHERE created_at BETWEEN ? AND ?"},
+        {name: "words", 
+          sql: "SELECT phrase, hws, speechpart, sentence, translation, examples, tags, counter"
+               +" FROM words "
+              +" WHERE created_at BETWEEN ? AND ?"},                
     ]; 
     
     let datefrom = day+" 00:00:00";
