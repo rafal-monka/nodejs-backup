@@ -21,7 +21,7 @@ console.log('backupMemory');
         {name: "words", 
           sql: "SELECT phrase, hws, speechpart, sentence, translation, examples, tags, counter"
                +" FROM words "
-              +" WHERE created_at BETWEEN ? AND ?"},                
+              +" WHERE createdAt BETWEEN ? AND ?"},                
     ]; 
     
     let datefrom = day+" 00:00:00";
