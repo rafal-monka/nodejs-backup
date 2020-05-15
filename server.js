@@ -71,7 +71,7 @@ app.listen(PORT, () => {
 
 console.log('schedule.scheduleJob');
 //bj.backupJob();
-var j = schedule.scheduleJob("0 20 * * *", function(){
+var j = schedule.scheduleJob("55 19 * * *", function(){ //21:45
     bj.backupJob();
 });
 

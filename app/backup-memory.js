@@ -19,7 +19,7 @@ console.log('backupMemory');
                +" FROM places "
               +" WHERE created_at BETWEEN ? AND ?"},
         {name: "words", 
-          sql: "SELECT phrase, hws, speechpart, sentence, translation, examples, tags, counter"
+          sql: "SELECT phrase, hws, speechpart, replace(sentence,'\n','\r') as sentence, translation, replace(examples,'\n','\r') as examples, tags, counter"
                +" FROM words "
               +" WHERE createdAt BETWEEN ? AND ?"},                
     ]; 
