@@ -69,9 +69,11 @@ app.listen(PORT, () => {
   console.log(`Server Node.js is running on port ${PORT}.`);
 });
 
-console.log('schedule.scheduleJob');
+//schedule (or execute) job
+let cronParams = "45 20 * * *"; //22:45
+console.log('schedule.scheduleJob cronParams', cronParams);
 //bj.backupJob();
-var j = schedule.scheduleJob("55 19 * * *", function(){ //21:45
+var j = schedule.scheduleJob(cronParams, function(){ 
     bj.backupJob();
 });
 
